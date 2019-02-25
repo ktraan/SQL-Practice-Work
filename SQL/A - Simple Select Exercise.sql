@@ -19,6 +19,11 @@ SELECT  'Kevin' + ' ' + 'Tran' AS 'Instructor',
 -- The SELECT statement produces a table of results which will consist of one or more rows of data
 SELECT  ClubId, ClubName
 FROM    Club
+
+-- The * can be used to indicate all of the coulmns. BUT DO NOT DO THIS
+SELECT *
+FROM   CLUB
+
 -- Notice that when selecting from an exisisting table, we identify which columns we want to show
 -- then those column names are used as the coulmn title for the results
 -- The AS keyword in the SELECT clause is used to assign a title to the column in the results table
@@ -52,8 +57,8 @@ FROM   Course
 WHERE  CourseID = 'DMIT101'
 
 --5. Select the Staff names who have positionID of 3
-SELECT FirstName, LastName
-       --,PositionID -- Press [ctrl] + k, then [ctrl] + u to un-comment
+SELECT FirstName, LastName,
+       PositionID -- Press [ctrl] + k, then [ctrl] + u to un-comment
 FROM   Staff
 WHERE  PositionID = 3
 
@@ -65,6 +70,15 @@ FROM    Position
 SELECT  C.CourseName
 FROM    Course C -- I can have an alias to the table name
 WHERE   C.CourseHours < 96
+-- Check this out...
+SELECT  ST.LastName, ST.DateHired, ST.DateReleased
+FROM    Staff AS ST -- Use of AS keyword in producing table/column aliases is optional
+                    -- But it can be a good idea for readability
+--You can use the full table name to fully-qualitfy your column names
+SELECT  Staff.LastName, Staff.FirstName, Staff.DateHired
+FROM    Staff
+WHERE   Staff.DateReleased IS NOT NULL
+-- NOTE: You can't mix the use of a table alias with the full name of the coulmn
 
 -- 7.   Select the studentID's, CourseID and mark where the Mark is between 70 and 80
 SELECT  StudentID, CourseId, Mark
@@ -93,7 +107,7 @@ WHERE   R.Mark BETWEEN 70 AND 80
 SELECT  R.StudentID, R.CourseId, R.Mark
 FROM    Registration R
 WHERE   R.Mark BETWEEN 70 AND 80
-  AND   R.CourseId IN ('DMIT223', 'DMIT168')
+  AND   R.CourseId IN ('DMIT223', 'DMIT168')  -- IN keyword allows us to have a list of values that will be checked in a OR matter
 
 --8.a. Select the studentIDs, CourseID and mark where the Mark is 80 and 85
 SELECT  R.StudentID, R.CourseId, R.Mark
