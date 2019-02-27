@@ -25,13 +25,27 @@ WHERE   CourseId = 'DMIT104'
 SELECT  COUNT(FirstName) AS 'Student Count'
 FROM    Student
 
---3.    The argument for the COUNT() function can be any column and/or expression.
+--3b.    The argument for the COUNT() function can be any column and/or expression.
 --      COUNT() will count the number of occurrences (i.e., "rows").
 SELECT  COUNT(1) AS 'Student Count'
 FROM    Student
 
---4.	Select how many students are taking (have a grade for) DMIT152
+--3c.   Select how many people aer in the Staff table
+SELECT  COUNT(StaffID) AS 'Staff Count'  -- It is common to use the PK as the coulmn that you are counting
+FROM    Staff
+
+--3d.   Do a count of the people in the Staff table who no longer work here
+--      Refresh your memory about all the data in the Staff table
+--      SELECT  * FROM Staff
+SELECT  COUNT(DateReleased) AS 'Retired Staff'
+FROM    Staff
+
+--4.	Select how many students have taken (have a grade for) DMIT152
 SELECT  COUNT(Mark) AS 'Student Count for DMIT152'
+FROM    Registration
+WHERE   CourseId = 'DMIT152'
+--4.b   Select how many students are or have been in DMIT152
+SELECT  COUNT(StudentID)
 FROM    Registration
 WHERE   CourseId = 'DMIT152'
     -- BTW, what course is 'DMIT152'???
@@ -41,26 +55,36 @@ WHERE   CourseId = 'DMIT152'
 
 --5.	Select the average payment amount for payment type 5
 -- TODO: Student Answer Here - Hint: It's in the Payment table....
-
+SELECT  AVG(Amount)
+FROM    Payment
+WHERE   PaymentTypeID = '5'
 
 -- Given that there are some other aggregate methods like MAX(columnName) and MIN(columnName), complete the following two questions:
 --6. Select the highest payment amount
 -- TODO: Student Answer Here
-
+SELECT  MAX(Amount)
+FROM    Payment
 
 --7.	 Select the lowest payment amount
 -- TODO: Student Answer Here
-
+SELECT  MIN(Amount)
+FROM    Payment
 
 --8. Select the total of all the payments that have been made
 -- TODO: Student Answer Here
+SELECT  SUM(Amount)
+FROM    Payment
 
 --9. How many different payment types does the school accept?
 -- Do a bit of exploratory selects
 SELECT PaymentTypeDescription
 FROM   PaymentType
 -- TODO: Student Answer Here
+SELECT  COUNT(PaymentTypeID)
+FROM    PaymentType
 
 --10. How many students are in club 'CSS'?
 -- TODO: Student Answer Here
-
+SELECT  COUNT(StudentID)
+FROM    Activity
+WHERE   ClubId LIKE 'CSS'
