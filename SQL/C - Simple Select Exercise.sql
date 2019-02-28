@@ -106,10 +106,16 @@ GROUP BY CourseHours
 SELECT  StaffID,
         AVG(Mark)
 FROM    Registration
-
-        
+GROUP BY StaffID
+ORDER BY AVG(Mark) DESC
+--SELECT    StaffID, Mark FROM Registration
 
 --12. How many male and female students do we have?
+SELECT  COUNT(Gender) AS 'Male',
+        COUNT(Gender) AS 'Female'
+FROM    Student
+GROUP BY Gender
+
 
 --13. Show the average balance owing for male and female students.
 
