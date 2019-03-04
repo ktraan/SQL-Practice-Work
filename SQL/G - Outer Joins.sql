@@ -78,13 +78,14 @@ GROUP BY FirstName, LastName
 -- A second year couse is one where the number portion of the CourseId starts with a '2'
 SELECT  FirstName + ' ' + LastName AS 'Staff Name',
         PositionDescription AS 'Job Position',
-        CourseId AS '2nd Year Courses'
+        COUNT(CourseId) AS '2nd Year Courses'
 FROM    Position P
     LEFT OUTER JOIN Staff S
         ON P.PositionID = S.PositionID
     LEFT OUTER JOIN Registration R
         ON S.StaffID = R.StaffId
 WHERE   CourseId LIKE 'DMIT2%'
+GROUP BY FirstName, LastName, PositionDescription
 
 --9. What is the average payment amount made by each student? Included all the students, and display student's full names
 SELECT  FirstName + ' ' + LastName AS 'Student Name',
