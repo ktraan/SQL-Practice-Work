@@ -42,4 +42,63 @@ GROUP BY FirstName, LastName
 
 --5. How many students are in each club? Display club name and count.
 -- TODO: Student Answer Here...
+SELECT  ClubName,
+        COUNT(StudentID) AS 'Number of students'
+FROM    Club C
+    LEFT OUTER JOIN Activity A
+        ON C.ClubId = A.ClubId
+GROUP BY ClubName
 
+--6. How many times has each course been offered? Display the CourseId and CourseName along with the number of times it has been offered
+-- HINT: Run the following to add some more rows in your Course table.
+INSERT INTO Course(CourseId, CourseName, CourseHours, MaxStudents, CourseCost)
+VALUES  ('DMIT115', 'Visual SQL', 60, 12, 500),
+        ('DMIT175', 'Database Programming', 60, 12, 500),
+        ('DMIT228', 'Advanced Application Development', 60, 12, 500),
+        ('DMIT215', 'Database Administration', 60, 12, 500)
+--TODO: Student answer here
+SELECT  C.CourseId AS 'Course Id',
+        CourseName AS 'Course Name',
+        COUNT(R.CourseId) AS 'Offered Times'
+FROM    Course C
+    LEFT OUTER JOIN Registration R
+    ON C.CourseId = R.CourseId
+GROUP BY C.CourseId, CourseName
+
+--7. How many courses have each of the staff taught? Display the full name and the count
+-- TODO: Answer here
+SELECT  FirstName + ' ' + LastName AS 'Staff Name',
+        COUNT(CourseId) AS 'Courses taught'
+FROM    Staff S
+    LEFT OUTER JOIN Registration R
+        ON S.StaffID = R.StaffID
+GROUP BY FirstName, LastName
+
+--8. How many second-year courses have the staff taught? Include all the staff and their job position.
+-- A second year couse is one where the number portion of the CourseId starts with a '2'
+SELECT  FirstName + ' ' + LastName AS 'Staff Name',
+        PositionDescription AS 'Job Position',
+        CourseId AS '2nd Year Courses'
+FROM    Position P
+    LEFT OUTER JOIN Staff S
+        ON P.PositionID = S.PositionID
+    LEFT OUTER JOIN Registration R
+        ON S.StaffID = R.StaffId
+WHERE   CourseId LIKE 'DMIT2%'
+
+--9. What is the average payment amount made by each student? Included all the students, and display student's full names
+SELECT  FirstName + ' ' + LastName AS 'Student Name',
+        AVG(Amount) AS 'Avergage Payments'
+FROM    Student S
+    LEFT OUTER JOIN Payment P
+        ON S.StudentID = P.StudentID
+GROUP BY FirstName, LastName
+
+--10. Display the names of all students who have not made a payment.
+
+SELECT FirstName + ' ' + LastName AS 'Student Name'
+FROM   Student S
+    LEFT OUTER JOIN Payment P
+        ON S.StudentID = P.StudentID
+GROUP BY FirstName, LastName
+HAVING COUNT(Amount) <= 0
