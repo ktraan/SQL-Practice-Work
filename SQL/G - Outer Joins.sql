@@ -97,7 +97,7 @@ GROUP BY FirstName, LastName
 
 --10. Display the names of all students who have not made a payment.
 
-SELECT FirstName + ' ' + LastName AS 'Student Name'
+SELECT FirstName + ' ' + LastName AS 'Students that have not paid'
 FROM   Student S
     LEFT OUTER JOIN Payment P
         ON S.StudentID = P.StudentID
