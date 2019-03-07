@@ -2,6 +2,29 @@
 USE [A01-School]
 GO -- Execute the code up to this point as a single batch
 
+/*
+    Notes:
+    The syntax for the INSERT statement is 
+    INSERT INTO TableName(Comma, Seperated, Listof, ColumnNames)
+    VALUES ('A', 'Value', 'Per', 'Column')
+
+    The line abouve will insert a single row of data. Typically, this syntax is used for hard-coded values.
+    To insert multiple rows of hard-coded values, follow this:
+
+    INSERT INTO TableName(Comma, Seperated, Listof, ColumnNames)
+    VALUES ('A', 'Value', 'Per', 'Column'),
+           ('Another', 'Row', 'Of', 'Values')
+
+    Another syntax for the INSERT statement is to use a SELECT clause in place of the VALUES clause.
+    This is used for zero-to-many possible rows to insert.
+
+    INSERT INTO TableName(Comma, Seperated, Listof, ColumnNames)
+    SELECT First, Second, Third, LastColumn
+    FROM SomeTable
+
+*/
+
+
 -- Insert Examples
 -- 1. Let's add a new course called "Expert SQL". It will be a 90 hour course with a cost of $450.00
 INSERT INTO Course(CourseId, CourseName, CourseHours, CourseCost)
@@ -14,7 +37,7 @@ SELECT 'Dan', 'Gilleland', GETDATE(), PositionID
        --, PositionDescription
 FROM   Position
 WHERE  PositionDescription = 'Instructor'
--- 2b. Let's get another instructor
+-- 2b. Let's get another instructor ***IMPORTANT***
 INSERT INTO Staff(FirstName, LastName, DateHired, PositionID)
 VALUES ('Shane', 'Bell', GETDATE(), 
         (SELECT PositionID
