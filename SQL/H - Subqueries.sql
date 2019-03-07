@@ -104,4 +104,10 @@ WHERE City = 'Edm'
 
 --9. What is the avg mark for each of the students from Edm? Display their StudentID and avg(mark)
 -- TODO: Student Answer Here...
+SELECT StudentID AS 'Student ID',
+       AVG(Mark)
+FROM   Registration
+        INNER JOIB
+WHERE  StudentID IN (SELECT StudentID FROM Student WHERE City = 'Edm')
+GROUP BY StudentID
 
