@@ -53,6 +53,58 @@ AS
 RETURN
 GO
 
+-- 1.5 Make a Stored Procedure that will find a club based on the first two or more characters of the club's ID.
+--     Call the procedure "FindStudentClubs".
+-- The following stored procedure does the query, but without validation
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'FindStudentClubs')
+    DROP PROCEDURE FindStudentClubs
+GO
+CREATE PROCEDURE FindStudentClubs
+    @PartialID  varchar(10)
+AS
+    SELECT ClubId, ClubName 
+    FROM   Club
+    WHERE  ClubId LIKE @PartialID + '%'
+RETURN
+GO
+
+EXEC    FindStudentClubs '' 
+GO
+ALTER PROCEDURE FindStudentClubs
+    @PartialID  varchar(10)
+AS
+    IF @PartialID IS NULL OR LEN(@PartialID) < 2
+    BEGIN
+        RAISERROR('The PartialID must be two or more characters', 16, 1)
+        -- 16 is the error number, 1 is the severity
+    END
+    SELECT ClubId, ClubName 
+    FROM   Club
+    WHERE  ClubId LIKE @PartialID + '%'
+RETURN
+GO
+EXEC    FindStudentClubs '' 
+GO
+-- The above changes did not stop the select. To fix it , we need the ELSE side of the IF validation
+
+ALTER PROCEDURE FindStudentClubs
+    @PartialID  varchar(10)
+AS
+    IF @PartialID IS NULL OR LEN(@PartialID) < 2
+    BEGIN
+        RAISERROR('The PartialID must be two or more characters', 16, 1)
+        -- 16 is the error number, 1 is the severity
+    END
+    ELSE
+    BEGIN
+        SELECT ClubId, ClubName 
+        FROM   Club
+        WHERE  ClubId LIKE @PartialID + '%'
+    END
+RETURN
+GO
+EXEC    FindStudentClubs '' 
+GO
 
 -- 2. Create a stored procedure that will change the mailing address for a student. Call it ChangeMailingAddress.
 --    Make sure all the parameter values are supplied before running the UPDATE (ie: no NULLs).
