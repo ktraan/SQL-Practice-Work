@@ -21,7 +21,7 @@ IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROC
 GO
 CREATE PROCEDURE AddPosition
     -- Parameters here
-    @Description    varchar(50)
+    @Description    varchar(500)
 AS
     -- Body of procedure here
     IF @Description IS NULL
@@ -30,7 +30,7 @@ AS
     END   -- }
     ELSE
     BEGIN -- {
-        IF LEN(@Description) < 5
+        IF LEN(@Description) < 5 OR LEN(@Description) > 50
         BEGIN -- {
             RAISERROR('Description must be between 5 and 50 characters', 16, 1)
         END   -- }
@@ -41,7 +41,7 @@ AS
                 RAISERROR('Duplicate positions are not allowed', 16, 1)
             END   -- }
             ELSE
-            BEGIN -- {
+            BEGIN -- { -- this begin end is needed because of two SQL statements
                 INSERT INTO Position(PositionDescription)
                 VALUES (@Description)
                 -- Send back the database-generated primary key
@@ -58,7 +58,13 @@ EXEC AddPosition 'The Boss'
 EXEC AddPosition NULL -- This should result in an error being raised
 EXEC AddPosition 'Me' -- This should result in an error being raised
 EXEC AddPosition 'The Boss' -- This should result in an error as well (a duplicate)
+EXEC AddPosition 'REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE' -- This should result in an error because of the max length
 GO
+
+--SELECT * FROM Position
+--DELETE FROM Position WHERE PositionID = 13
+
 
 -- 2) Create a stored procedure called LookupClubMembers that takes a club ID and returns the full names of all members in the club.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'LookupClubMembers')
@@ -107,6 +113,7 @@ AS
     BEGIN
         DELETE FROM Activity
         WHERE       ClubId = @ClubId
+        -- Any Insert/Update/Delete will affect the global @@ROWCOUNT value
         IF @@ROWCOUNT = 0
         BEGIN
             RAISERROR('No members were deleted', 16, 1)
@@ -124,7 +131,20 @@ EXEC RemoveClubMembership 'CSS' -- The second time this is run, there will be no
 
 -- 4) Create a stored procedure called OverActiveMembers that takes a single number: ClubCount. This procedure should return the names of all members that are active in as many or more clubs than the supplied club count.
 --    (p.s. - You might want to make sure to add more members to more clubs, seeing as tests for the last question might remove a lot of club members....)
-
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'OverActiveMembers')
+    DROP PROCEDURE OverActiveMembers
+GO
+CREATE PROCEDURE OverActiveMembers
+    @ClubCount      char(1)
+AS
+    IF @ClubCount IS NULL
+    BEGIN
+    RAISERROR('ClubCount is not valid', 16, 1)
+    END
+    BEGIN
+    
+SELECt * FROM Club
+    
 
 
 -- 5) Create a stored procedure called ListStudentsWithoutClubs that lists the full names of all students who are not active in a club.
