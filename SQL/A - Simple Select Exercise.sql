@@ -128,6 +128,7 @@ SELECT  CourseName
 FROM    Course
 WHERE   CourseID LIKE '____1%' -- four underscores, 1, %
 --                     DMIT158
+SELECT CourseID FROM Course
 
 --11. Select the CourseID's and CourseNames where the CourseName contains the word 'programming'
 SELECT	CourseId, CourseName
