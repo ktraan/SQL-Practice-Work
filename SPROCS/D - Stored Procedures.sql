@@ -1,5 +1,7 @@
 --Stored Procedures (Sprocs)
-
+-- Global Variables - @@IDENTITY, @@ROWCOUNT, @@ERROR
+-- Other global variables can be found here:
+--  https://code.msdn.microsoft.com/Global-Variables-in-SQL-749688ef
 USE [A01-School]
 GO
 
@@ -21,7 +23,7 @@ IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROC
 GO
 CREATE PROCEDURE AddPosition
     -- Parameters here
-    @Description    varchar(500)
+    @Description    varchar(50)
 AS
     -- Body of procedure here
     IF @Description IS NULL
@@ -30,7 +32,7 @@ AS
     END   -- }
     ELSE
     BEGIN -- {
-        IF LEN(@Description) < 5 OR LEN(@Description) > 50
+        IF LEN(@Description) < 5
         BEGIN -- {
             RAISERROR('Description must be between 5 and 50 characters', 16, 1)
         END   -- }
@@ -41,11 +43,11 @@ AS
                 RAISERROR('Duplicate positions are not allowed', 16, 1)
             END   -- }
             ELSE
-            BEGIN -- { -- this begin end is needed because of two SQL statements
+            BEGIN -- { -- This BEGIN/END is needed, because of two SQL statements
                 INSERT INTO Position(PositionDescription)
                 VALUES (@Description)
                 -- Send back the database-generated primary key
-                SELECT @@IDENTITY -- This is a global variable
+                SELECT @@IDENTITY AS 'NewPositionID' -- This is a global variable
             END   -- }
         END   -- }
     END   -- }
@@ -58,13 +60,49 @@ EXEC AddPosition 'The Boss'
 EXEC AddPosition NULL -- This should result in an error being raised
 EXEC AddPosition 'Me' -- This should result in an error being raised
 EXEC AddPosition 'The Boss' -- This should result in an error as well (a duplicate)
-EXEC AddPosition 'REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE' -- This should result in an error because of the max length
+-- This long string gets truncated at the parameter, because the parameter size is 50
+EXEC AddPosition 'The Boss of everything and everyone, everywhere and all the time, both past present and future, without any possible exception. Unless, of course, I''m not...'
+EXEC AddPosition 'The Janitor'
+SELECT * FROM Position
+-- DELETE FROM Position WHERE PositionID = 12
 GO
 
---SELECT * FROM Position
---DELETE FROM Position WHERE PositionID = 13
+ALTER PROCEDURE AddPosition
+    -- Parameters here
+    @Description    varchar(500) -- Just to "allow" a larger value, but check the length later
+AS
+    -- Body of procedure here
+    IF @Description IS NULL
+    BEGIN -- {
+        RAISERROR('Description is required', 16, 1) -- Throw an exception
+    END   -- }
+    ELSE
+    BEGIN -- {
+        IF LEN(@Description) < 5 OR Len(@Description) > 50
+        BEGIN -- {
+            RAISERROR('Description must be between 5 and 50 characters', 16, 1)
+        END   -- }
+        ELSE
+        BEGIN -- {
+            IF EXISTS(SELECT * FROM Position WHERE PositionDescription = @Description)
+            BEGIN -- {
+                RAISERROR('Duplicate positions are not allowed', 16, 1)
+            END   -- }
+            ELSE
+            BEGIN -- { -- This BEGIN/END is needed, because of two SQL statements
+                INSERT INTO Position(PositionDescription)
+                VALUES (@Description)
+                -- Send back the database-generated primary key
+                SELECT @@IDENTITY -- This is a global variable
+            END   -- }
+        END   -- }
+    END   -- }
+RETURN
+GO
 
+EXEC AddPosition 'Still the Boss of everything and everyone, everywhere and all the time, both past present and future, without any possible exception. Unless, of course, I''m not...'
+SELECT * FROM Position
+-- DELETE FROM Position WHERE PositionID = 12
 
 -- 2) Create a stored procedure called LookupClubMembers that takes a club ID and returns the full names of all members in the club.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'LookupClubMembers')
@@ -131,20 +169,7 @@ EXEC RemoveClubMembership 'CSS' -- The second time this is run, there will be no
 
 -- 4) Create a stored procedure called OverActiveMembers that takes a single number: ClubCount. This procedure should return the names of all members that are active in as many or more clubs than the supplied club count.
 --    (p.s. - You might want to make sure to add more members to more clubs, seeing as tests for the last question might remove a lot of club members....)
-IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'OverActiveMembers')
-    DROP PROCEDURE OverActiveMembers
-GO
-CREATE PROCEDURE OverActiveMembers
-    @ClubCount      char(1)
-AS
-    IF @ClubCount IS NULL
-    BEGIN
-    RAISERROR('ClubCount is not valid', 16, 1)
-    END
-    BEGIN
-    
-SELECt * FROM Club
-    
+
 
 
 -- 5) Create a stored procedure called ListStudentsWithoutClubs that lists the full names of all students who are not active in a club.

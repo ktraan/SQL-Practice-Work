@@ -6,7 +6,7 @@ GO
 SELECT  FirstName + ' ' + LastName AS 'Full Name',
         CourseId
 FROM    Student -- Start the FROM statement by identifying one of the tables you want
-    INNER JOIN Registration -- Identify another table you are connection to
+    INNER JOIN Registration -- Identify another table you are connecting to
         -- ON is where we specify which columns should be used in the relationship
         ON Student.StudentID = Registration.StudentID
 
@@ -16,7 +16,7 @@ SELECT  FirstName + ' ' + LastName AS 'FullName',
         CourseName
 FROM    Student AS S
     INNER JOIN Registration AS R
-        ON S.StudentID = R.StudentID    -- ON helps us identify MATCHING data
+        ON S.StudentID = R.StudentID -- ON helps us identify MATCHING data
     INNER JOIN Course AS C
         ON R.CourseId = C.CourseId
 
@@ -84,8 +84,4 @@ WHERE   S.StudentID = 199912010
 
 --9. What are the Student Names, courseID's that have Marks > 80?
 -- TODO: Student Answer Here...
-SELECT  FirstName + ' ' + LastName AS 'Student',
-        CourseId
-FROM    Student S
-    INNER JOIN Registration R ON S.StudentID = R.StudentID
-WHERE   R.Mark > 80
+

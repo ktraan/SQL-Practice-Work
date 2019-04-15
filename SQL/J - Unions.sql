@@ -60,7 +60,8 @@ AS
         INNER JOIN Position P ON S.PositionID = P.PositionID
 GO
 
---2. Create a list of course ID's and the number of students in the course and 
---   UNION that with a list of the courseID and the MaxStudents of the course. 
---   For the first list, the columns should be 'Course', 'Count', 'Type' with the type for the
---   first list being 'actual' + Semseter and the type for the second list being 'planned'
+
+--2.  Create a list of course IDs and the number of students in the course and
+--    UNION that with a list of the course IDs and the MaxStudents of the course.
+--    The columns should be 'Course', 'Count', and 'Type', with the type for the
+--    first list being 'Actual-' + Semester and the type for the second list being 'Planned'.

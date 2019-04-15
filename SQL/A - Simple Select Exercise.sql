@@ -4,32 +4,34 @@ USE [A01-School]
 GO
 
 -- Simple Select, without any other clauses
-SELECT  'Kevin', 'Tran'
+SELECT  'Dan', 'Gilleland'
 
 -- Simple Select with expressions
-SELECT  'Kevin' + ' ' + 'Tran', 18 * 52, '5' + '10'
+SELECT  'Dan' + ' ' + 'Gilleland', 18 * 52, '5' + '10'
 
 -- Specify a column name with some hard-code/calculated values
-SELECT  'Kevin' + ' ' + 'Tran' AS 'Instructor',
-        18 * 52 AS 'Weeks at the job'
+SELECT  'Dan' + ' ' + 'Gilleland' AS 'Instructor',
+        19 * 52 AS 'Weeks at the job'
 
 -- Let's use the SELECT statement with database tables
 
 -- 1.   Select all the information from the Club table
--- The SELECT statement produces a table of results which will consist of one or more rows of data
+-- The SELECT statement produces a table of results which will consist of one or more rows of data.
 SELECT  ClubId, ClubName
 FROM    Club
 
--- The * can be used to indicate all of the coulmns. BUT DO NOT DO THIS
-SELECT *
-FROM   CLUB
+-- The * can be used to indicate all of the columns. But DO NOT DO THIS, or your instructor
+-- WILL deduct marks EVERY TIME you do this.
+SELECT  *
+FROM    Club
 
--- Notice that when selecting from an exisisting table, we identify which columns we want to show
--- then those column names are used as the coulmn title for the results
--- The AS keyword in the SELECT clause is used to assign a title to the column in the results table
-SELECT ClubId AS 'ID', ClubName
-FROM Club
-  -- Pro-tip: Press CTRL R for results
+-- Notice that when selecting from an existing table, when we identify which columns we want to
+-- show, then those column names are used as the column title for the results table.
+-- The AS keyword  in the SELECT clause is used to assign a title to the column in the results table
+SELECT  ClubId AS 'ID', ClubName
+FROM    Club
+
+  -- Pro-Tip: Press [ctrl] + r to toggle the results window
   -- Pro-Tip: If you write the FROM clause before specifying the columns,
   --            you will get Intellisense help on the column names
   -- Pro-Tip: Press [ctrl] + [shift] + r to "refresh" intellisense
@@ -43,6 +45,16 @@ FROM    Student
 -- 2.b. Select the student id and full name of all the students
 SELECT  StudentID, FirstName + ' ' + LastName AS 'Full Name'
 FROM    Student
+-- 2.c. Select the first and last names of all the students,
+--      and sort the results by the last name
+SELECT    FirstName, LastName
+FROM      Student
+ORDER BY  LastName
+-- 2.d. Select the first and last names of all the students,
+--      and sort the results by the last name, then by the first name
+SELECT    FirstName, LastName
+FROM      Student
+ORDER BY  LastName, FirstName
 
 --3. Select the CourseId and CourseName of all the courses. Use the column aliases of Course ID and Course Name
 SELECT  CourseId AS 'Course ID', CourseName AS 'Course Name'
@@ -56,9 +68,9 @@ SELECT CourseID, CourseName, CourseHours, MaxStudents, CourseCost
 FROM   Course
 WHERE  CourseID = 'DMIT101'
 
---5. Select the Staff names who have positionID of 3
-SELECT FirstName, LastName,
-       PositionID -- Press [ctrl] + k, then [ctrl] + u to un-comment
+--5. Select the Staff names who have job positionID of 3
+SELECT FirstName, LastName
+       --,PositionID -- Press [ctrl] + k, then [ctrl] + u to un-comment
 FROM   Staff
 WHERE  PositionID = 3
 
@@ -70,15 +82,15 @@ FROM    Position
 SELECT  C.CourseName
 FROM    Course C -- I can have an alias to the table name
 WHERE   C.CourseHours < 96
--- Check this out...
+-- Type with me the following...
 SELECT  ST.LastName, ST.DateHired, ST.DateReleased
-FROM    Staff AS ST -- Use of AS keyword in producing table/column aliases is optional
-                    -- But it can be a good idea for readability
---You can use the full table name to fully-qualitfy your column names
+FROM    Staff AS ST -- The use of the AS keyword in producing table/column aliases is optional
+                    -- but it can be a good idea for readability.
+-- You can use the full table name to fully-qualify your column names
 SELECT  Staff.LastName, Staff.FirstName, Staff.DateHired
 FROM    Staff
 WHERE   Staff.DateReleased IS NOT NULL
--- NOTE: You can't mix the use of a table alias with the full name of the coulmn
+-- NOTE: You can't mix the use of a table alias with the full name of the table
 
 -- 7.   Select the studentID's, CourseID and mark where the Mark is between 70 and 80
 SELECT  StudentID, CourseId, Mark
@@ -107,7 +119,8 @@ WHERE   R.Mark BETWEEN 70 AND 80
 SELECT  R.StudentID, R.CourseId, R.Mark
 FROM    Registration R
 WHERE   R.Mark BETWEEN 70 AND 80
-  AND   R.CourseId IN ('DMIT223', 'DMIT168')  -- IN keyword allows us to have a list of values that will be checked in a OR matter
+  AND   R.CourseId IN ('DMIT223', 'DMIT168') -- The IN keyword allows us to have a list of values
+                                             -- that will be checked in a OR manner.
 
 --8.a. Select the studentIDs, CourseID and mark where the Mark is 80 and 85
 SELECT  R.StudentID, R.CourseId, R.Mark
@@ -128,24 +141,11 @@ SELECT  CourseName
 FROM    Course
 WHERE   CourseID LIKE '____1%' -- four underscores, 1, %
 --                     DMIT158
-SELECT CourseID FROM Course
 
 --11. Select the CourseID's and CourseNames where the CourseName contains the word 'programming'
-SELECT	CourseId, CourseName
-FROM	Course
-WHERE	CourseName LIKE 'programming%'
 
 --12. Select all the ClubNames who start with N or C.
-SELECT	ClubName
-FROM	Club 
-WHERE	ClubName LIKE 'N%' OR ClubName LIKE 'C%'
 
 --13. Select Student Names, Street Address and City where the lastName is only 3 letters long.
-SELECT	FirstName, LastName, StreetAddress, City
-FROM	Student
-WHERE	LastName LIKE '___' -- 3 underscores
 
 --14. Select all the StudentID's where the PaymentAmount < 500 OR the PaymentTypeID is 5
-SELECT	StudentID
-FROM	Payment
-WHERE	Amount BETWEEN 0 AND 500 OR PaymentTypeID LIKE '5'

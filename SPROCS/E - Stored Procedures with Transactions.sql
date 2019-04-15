@@ -37,7 +37,7 @@ AS
     ELSE
     BEGIN
         -- Begin Transaction
-        BEGIN TRANSACTION -- Means any insert/update/delete is temporary until committed
+        BEGIN TRANSACTION   -- Means that any insert/update/delete is "temporary" until committed
         -- Step 1) Withdraw the student from the first course
         --PRINT('Update Registration to set WithdrawYN to Y')
         UPDATE Registration
@@ -47,11 +47,11 @@ AS
           AND  Semester = @Semester
           AND  (WithdrawYN = 'N' OR WithdrawYN IS NULL)
         --         Check for error/rowcount
-        IF @@ERROR > 0 OR @@ROWCOUNT = 0 -- Do our check for errors after each insert/update/delete
+        IF @@ERROR > 0 OR @@ROWCOUNT = 0
         BEGIN
             --PRINT('RAISERROR + ROLLBACK')
             RAISERROR('Unable to withdraw student', 16, 1)
-            ROLLBACK TRANSACTION
+            ROLLBACK TRANSACTION -- reverses the "temporary" changes to the database
         END
         ELSE
         BEGIN
@@ -62,7 +62,7 @@ AS
             --         Check for error/rowcount
             -- Since @@ERROR and @@ROWCOUNT are global variables,
             -- we have to check them immediately after our insert/update/delete
-            IF @@ERROR > 0 OR @@ROWCOUNT = 0
+            IF @@ERROR > 0 OR @@ROWCOUNT = 0 -- Do our check for errors after each I/U/D
             BEGIN
                 --PRINT('RAISERROR + ROLLBACK')
                 RAISERROR('Unable to transfer student to new course', 16, 1)
@@ -71,7 +71,7 @@ AS
             ELSE
             BEGIN
                 --PRINT('COMMIT TRANSACTION')
-                COMMIT TRANSACTION -- Make changes permanent on the DB
+                COMMIT TRANSACTION -- Make the changes permanent on the database
             END
         END
     END
@@ -79,7 +79,7 @@ RETURN
 GO
 
 
--- 2. Add a stored procedure called AdjustMarks that takes in a course ID. The procedure should adjusts the marks of all students for that course by increasing the mark by 10%. Be sure that nobody gets a mark over 100%.
+-- 2. Add a stored procedure called AdjustMarks that takes in a course ID. The procedure should adjust the marks of all students for that course by increasing the mark by 10%. Be sure that nobody gets a mark over 100%.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'AdjustMarks')
     DROP PROCEDURE AdjustMarks
 GO
@@ -150,13 +150,14 @@ AS
     ELSE
     BEGIN
         -- Declare a bunch of local/temp variables
+        -- Each variable can only hold a single value at a time
         DECLARE @MaxStudents    smallint
         DECLARE @CurrentCount   smallint
         DECLARE @CourseCost     money
         -- Assign a value to each of the local variables
         SELECT @MaxStudents = MaxStudents FROM Course WHERE CourseId = @CourseID
         SELECT @CurrentCount = COUNT (StudentID) FROM Registration WHERE CourseId = @CourseID AND Semester = @Semester
-        SELECT @CourseCost = coursecost FROM Course WHERE CourseId = @CourseID
+        SELECT @CourseCost = CourseCost FROM Course WHERE CourseId = @CourseID
 
         IF @MaxStudents >= @currentcount 
         BEGIN

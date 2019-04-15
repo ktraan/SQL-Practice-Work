@@ -7,9 +7,9 @@ GO
 --1. Select the Payment dates and payment amount for all payments that were Cash
 SELECT PaymentDate, Amount
 FROM   Payment
-WHERE  PaymentTypeID = -- Using = means that the RH side must be a single value
-    -- Assuming that every PaymentTypeDescription will be UNIQUE,
-    -- The following subquery will return a single column and a single row
+WHERE  PaymentTypeID = -- Using the = means that the RH side must be a single value
+     -- Assuming that every PaymentTypeDescription will be UNIQUE,
+     -- the following subquery will return a single column and a single row
     (SELECT PaymentTypeID
      FROM   PaymentType
      WHERE  PaymentTypeDescription = 'cash')
@@ -23,12 +23,6 @@ WHERE  PaymentTypeDescription = 'cash'
 
 --2. Select The Student ID's of all the students that are in the 'Association of Computing Machinery' club
 -- TODO: Student Answer Here
-SELECT  StudentID
-FROM    Activity
-WHERE   ClubId = 
-        (SELECT ClubId
-         FROM   Club
-         WHERE  ClubName = 'Association of Computing Machinery')
 
 --3. Select All the staff full names for staff that have taught a course.
 SELECT FirstName + ' ' + LastName AS 'Staff'
@@ -45,11 +39,6 @@ FROM Staff
 
 --4. Select All the staff full names that taught DMIT172.
 -- TODO: Student Answer Here
-SELECT  FirstName + ' ' + LastName
-FROM    Staff
-WHERE   StaffID IN
-        (SELECT DISTINCT StaffID FROM Registration
-         WHERE CourseId = 'DMIT172')
 
 
 --5. Select All the staff full names of staff that have never taught a course
@@ -89,6 +78,21 @@ GROUP BY PaymentType.PaymentTypeID, PaymentTypeDescription
 HAVING COUNT(PaymentType.PaymentTypeID) >= ALL (SELECT COUNT(PaymentTypeID)
                                                 FROM Payment 
                                                 GROUP BY PaymentTypeID)
+--   Examining the solution:
+--   - First, take a look at the results of the subquery by itself - this gives us
+--     the counts and we can visually see what the highest value is
+                                               (SELECT COUNT(PaymentTypeID)
+                                                FROM Payment 
+                                                GROUP BY PaymentTypeID)
+--   - Second, take a look at the outer query, but leave out the filtering of aggregates.
+--     Also, display the count that is used in the HAVING clause. This should give you
+--     an idea of what the right answers should be.
+SELECT PaymentTypeDescription
+       , COUNT(PaymentType.PaymentTypeID)
+FROM   Payment 
+    INNER JOIN PaymentType 
+        ON Payment.PaymentTypeID = PaymentType.PaymentTypeID
+GROUP BY PaymentType.PaymentTypeID, PaymentTypeDescription 
 
 --8. What is the total avg mark for the students from Edm?
 SELECT AVG(Mark) AS 'Average'
@@ -104,10 +108,4 @@ WHERE City = 'Edm'
 
 --9. What is the avg mark for each of the students from Edm? Display their StudentID and avg(mark)
 -- TODO: Student Answer Here...
-SELECT StudentID AS 'Student ID',
-       AVG(Mark)
-FROM   Registration
-        INNER JOIB
-WHERE  StudentID IN (SELECT StudentID FROM Student WHERE City = 'Edm')
-GROUP BY StudentID
 

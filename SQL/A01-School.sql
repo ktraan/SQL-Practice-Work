@@ -312,6 +312,14 @@ Insert into Student
 	(StudentID, FirstName, LastName, Gender, StreetAddress, City, Province, PostalCode, Birthdate, BalanceOwing)
 Values
 	(200978400, 'Peter', 'Pan', 'M', '182 Downing St.', 'Tisdale', 'SK', 'S1K9H3', 'Nov  7 1986', 0.00)
+Insert into Student
+	(StudentID, FirstName, LastName, Gender, StreetAddress, City, Province, PostalCode, Birthdate, BalanceOwing)
+Values
+	(200645328, 'Andy', 'Brown', 'M', '11206 Empire Building', 'Edmonton', 'AB', 'T4S6S2', 'Oct  2 1977', 0.00)
+Insert into Student
+	(StudentID, FirstName, LastName, Gender, StreetAddress, City, Province, PostalCode, Birthdate, BalanceOwing)
+Values
+	(200645329, 'Zach', 'Brown', 'M', '11206 Empire Building', 'Edmonton', 'AB', 'T4S6S2', 'Oct  2 1977', 0.00)
 set Identity_Insert Student Off
 go
 
@@ -731,6 +739,14 @@ Insert into Registration
 	(StudentID, CourseID, Semester, Mark, WithdrawYN, StaffID)
 Values
 	(199912010, 'DMIT254', '2005M', 0, 'Y', 6)
+Insert into Registration
+	(StudentID, CourseID, Semester, Mark, WithdrawYN, StaffID)
+Values
+	(200688700, 'DMIT152', '2005S', null, 'N', 4)
+Insert into Registration
+	(StudentID, CourseID, Semester, Mark, WithdrawYN, StaffID)
+Values
+	(200645320, 'DMIT152', '2005S', null, 'N', 4)
 go
 
 set Identity_Insert PaymentType ON
@@ -905,3 +921,10 @@ set Identity_Insert Payment OFF
 -- need to turn date check back on
 alter table Payment CHECK constraint CK_PAY_PDate_Not_Old
 go
+
+-- Additional data
+INSERT INTO Course(CourseId, CourseName, CourseHours, MaxStudents, CourseCost)
+VALUES  ('DMIT115', 'Visual SQL', 60, 12, 500),
+        ('DMIT175', 'Database Programming', 60, 12, 500),
+        ('DMIT228', 'Advanced Application Development', 60, 12, 500),
+        ('DMIT215', 'Database Administration', 60, 12, 500)

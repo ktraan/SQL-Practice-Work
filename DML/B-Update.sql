@@ -3,13 +3,14 @@ USE [A01-School]
 GO -- Execute the code up to this point as a single batch
 
 /*  Notes:
-    The syntax for the UPDATE statement is 
+    The syntax for the UPDATE statement is
 
-    UPDATE  TableName
-    -- the SET Portion is a comma seperated list of assignment statements
-    SET     ColumnName = Expression,    
-            Column2 = Expression
-    WHERE   ConditionalExpression
+    UPDATE TableName
+    -- the SET portion is a comma-separated list of assignment statements
+    SET    ColumnName = Expression,
+           Column2 = Expression
+    WHERE  ConditionalExpression
+
 */
 -- Update Examples
 -- 1. The school thinks it can get a bit more money out of students
