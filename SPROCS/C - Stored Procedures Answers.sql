@@ -71,7 +71,22 @@ FROM    Staff S
 ORDER BY 'Staff Full Name', CourseId
 --      Place this in a stored procedure called CourseInstructors.
 
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'CourseInstructors')
+    DROP PROCEDURE CourseInstructors
+GO
+CREATE PROCEDURE CourseInstructors
+AS
+	SELECT  DISTINCT -- The DISTINCT keyword will remove duplate rows from the results
+			FirstName + ' ' + LastName AS 'Staff Full Name',
+			CourseId
+	FROM    Staff S
+		INNER JOIN Registration R
+			ON S.StaffID = R.StaffID
+	ORDER BY 'Staff Full Name', CourseId
+RETURN
+GO
 
+EXEC CourseInstructors
 /* ----------------------------------------------------- */
 
 -- 3.   Selects the students first and last names who have last names starting with S.
@@ -83,7 +98,20 @@ WHERE   LastName LIKE 'S%'
 --      Do NOT assume that the '%' is part of the value in the parameter variable;
 --      Your solution should concatenate the @PartialName with the wildcard.
 
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'FindStudentByLastName')
+    DROP PROCEDURE FindStudentByLastName
+GO
+CREATE PROCEDURE FindStudentByLastName
+	@PartialName	varchar(25)
+AS
+		SELECT  FirstName, LastName
+		FROM    Student
+		WHERE   LastName LIKE 'S%' + @PartialName
+RETURN
+GO
 
+SELECT * FROM Student
+exec FindStudentByLastName 'mith'
 /* ----------------------------------------------------- */
 
 -- 4.   Selects the CourseID's and Coursenames where the CourseName contains the word 'programming'.
@@ -94,7 +122,21 @@ WHERE   CourseName LIKE '%programming%'
 --      The parameter should be called @PartialName.
 --      Do NOT assume that the '%' is part of the value in the parameter variable.
 
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'FindCourse')
+    DROP PROCEDURE FindCourse
+GO
+CREATE PROCEDURE FindCourse
+	@PartialName varchar(25)
+AS
+	SELECT  CourseId, CourseName
+FROM    Course
+WHERE   CourseName LIKE @PartialName + '%programming%'
+		OR CourseName LIKE '%programming%' + @PartialName
 
+RETURN
+go
+
+exec FindCourse 'Advanced'
 /* ----------------------------------------------------- */
 
 -- 5.   Selects the Payment Type Description(s) that have the highest number of Payments made.
