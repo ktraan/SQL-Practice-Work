@@ -17,7 +17,8 @@ RETURN
 GO
 */
 
--- 1. Create a stored procedure called AddPosition that will accept a Position Description (varchar 50). Return the primary key value that was database-generated as a result of your Insert statement. Also, ensure that the supplied description is not NULL and that it is at least 5 characters long. Make sure that you do not allow a duplicate position name.
+-- 1. Create a stored procedure called AddPosition that will accept a Position Description (varchar 50). Return the primary key value that was database-generated as a result of your Insert statement. 
+--Also, ensure that the supplied description is not NULL and that it is at least 5 characters long. Make sure that you do not allow a duplicate position name.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'AddPosition')
     DROP PROCEDURE AddPosition
 GO
@@ -167,15 +168,53 @@ EXEC RemoveClubMembership 'CSS'
 EXEC RemoveClubMembership 'CSS' -- The second time this is run, there will be no members to remove
 
 
--- 4) Create a stored procedure called OverActiveMembers that takes a single number: ClubCount. This procedure should return the names of all members that are active in as many or more clubs than the supplied club count.
+-- 4) Create a stored procedure called OverActiveMembers that takes a single number: ClubCount. 
+--    This procedure should return the names of all members that are active in as many or more clubs than the supplied club count.
 --    (p.s. - You might want to make sure to add more members to more clubs, seeing as tests for the last question might remove a lot of club members....)
-
-
-
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'OverActiveMembers')
+    DROP PROCEDURE OverActiveMembers
+GO
+CREATE PROCEDURE OverActiveMembers
+	@ClubCount	int
+AS
+	IF @ClubCount IS NULL 
+	RAISERROR('Club count is required', 16, 1)
+	ELSE
+	SELECT FirstName FROM Student INNER JOIN Activity ON Student.StudentID = Activity.StudentID
+	group by FirstName
+	HAVING COUNT(ClubID) > @ClubCount
+RETURN
+GO
+select ClubId, FirstName from activity INNER JOIN Student ON activity.StudentID = Student.StudentID
+EXEC OverActiveMembers '3'
 -- 5) Create a stored procedure called ListStudentsWithoutClubs that lists the full names of all students who are not active in a club.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'ListStudentsWithoutClubs')
+    DROP PROCEDURE ListStudentsWithoutClubs
+GO
+CREATE PROCEDURE ListStudentsWithoutClubs
+AS
+	SELECT FirstName FROM Student LEFT OUTER JOIN Activity ON Student.StudentID = Activity.StudentID
+	WHERE ClubID IS NULL
+RETURN
+GO
 
+EXEC ListStudentsWithoutClubs
 
+-- 6) Create a stored procedure called LookupStudent that accepts a partial student last name and returns a list of all students whose last name includes the partial last name. 
+--  Return the student first and last name as well as their ID.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'LookupStudent')
+    DROP PROCEDURE LookupStudent
+GO
+CREATE PROCEDURE LookupStudent
+	@PartialName	varchar(25)
+AS
+	IF @PartialName IS NULL
+	RAISERROR('Last name required', 16, 1)
+	ELSE
+		SELECT StudentID, FirstName + LastName FROM Student
+		WHERE LastName LIKE '%' + @PartialName + '%'
+RETURN
+GO
+Select FirstName+LastName FROM Student
 
--- 6) Create a stored procedure called LookupStudent that accepts a partial student last name and returns a list of all students whose last name includes the partial last name. Return the student first and last name as well as their ID.
-
-
+exec LookupStudent 't'

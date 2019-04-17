@@ -167,14 +167,60 @@ GO
 
 
 -- 5. Create a stored procedure that will remove a student from a club. Call it RemoveFromClub.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'RemoveFromClub')
+    DROP PROCEDURE RemoveFromClub
+GO
+CREATE PROCEDURE RemoveFromClub
+	@StudentID		int,
+	@ClubID				varchar(10)
+AS
+	IF @StudentID IS NULL OR @ClubID IS NULL
+		RAISERROR('All parameters required', 16, 1)
+	ELSE
+		DELETE FROM Activity
+		WHERE StudentID = @StudentID AND
+			   ClubId = @ClubID
+RETURN
+GO
 
+select * from activity
+EXEC RemoveFromClub '199899200', 'CSS'
 
 -- Query-based Stored Procedures
 -- 6. Create a stored procedure that will display all the staff and their position in the school.
 --    Show the full name of the staff member and the description of their position.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'StaffDescriptions')
+    DROP PROCEDURE StaffDescriptions
+GO
+CREATE PROCEDURE StaffDescriptions
+AS
+	SELECT FirstName + LastName,
+			PositionDescription
+	FROM	Staff S
+	INNER JOIN Position P ON S.PositionID = P.PositionID
+RETURN
+GO
+
+SELECT * FROM STAFF
+EXEC StaffDescriptions
 
 -- 7. Display all the final course marks for a given student. Include the name and number of the course
 --    along with the student's mark.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'StudentFinalMarks')
+    DROP PROCEDURE StudentFinalMarks
+GO
+CREATE PROCEDURE StudentFinalMarks
+AS
+	SELECT FirstName + LastName,
+			CourseID,
+			Mark
+	FROM	Student S INNER JOIN Registration R ON S.StudentID = R.StudentID
+RETURN
+GO
+EXEC StudentFinalMarks
+
+
+select * from Course
 
 -- 8. Display the students that are enrolled in a given course on a given semester.
 --    Display the course name and the student's full name and mark.
